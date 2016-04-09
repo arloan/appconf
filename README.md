@@ -1,6 +1,6 @@
 # AppConf
 
-**AppConf** is a ruby gem used to query values of hierarchically organized configuration items from a series of configuration YAML files in priority, via dot split item path names.
+**AppConf** is a ruby gem used to query config values from one ore more series of YAML configuration files in priority, via dot split item path names.
 
 
 
