@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 	s.email			= 'arloan@gmail.com'
 	s.homepage		= 'https://github.com/arloan/appconf'
 	s.summary		= 'App YAML Config in Priority'
-	s.description	= 'Query config values from one or more series of YAML files in priority.'
+	s.description	= 'Query config values from one or more series of YAML configuration files in priority.'
 
 	# s.required_rubygems_version = ">= 1.3.6"
 	# s.add_dependency "another", "~> 1.2"

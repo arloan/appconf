@@ -48,7 +48,7 @@ class AppConfig
 		@@app_root_dir = File.expand_path(app_root_dir)
 
 		raise ArgumentError, 'deploy config directory does not exist or not a directory' if deploy_conf_dir && !File.directory?(deploy_conf_dir)
-		@@deploy_config_dir = deploy_conf_dir or ENV[@base_name.upcase + '_CONF_DIR']
+		@@deploy_config_dir = deploy_conf_dir or ENV[@@app_name.upcase + '_CONF_DIR']
 		raise ConfigError, 'config directory `%s\' specifed by environment does not exist or not a directory' %
 			@@deploy_config_dir if @@deploy_config_dir && !File.directory?(@@deploy_config_dir)
 	end
