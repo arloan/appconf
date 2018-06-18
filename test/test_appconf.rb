@@ -18,7 +18,10 @@ class AppConfigTest < MiniTest::Unit::TestCase
 	TEST_CONFIG_NAME		= 'foo.bar'
 
 	# a new TestCase object created for every test method testing
-	AppConfig.setup 'Test', File.dirname(__FILE__), ENV['TMP']
+	dd = File.join(ENV['TMP'] || ENV['TMPDIR'] || ENV['HOME'], 'appconf.tmp')
+	Dir.mkdir dd unless File.exist?(dd)
+	puts 'deploy dir: ' + dd
+	AppConfig.setup 'Test', File.dirname(__FILE__), dd
 	@@config = AppConfig.get_config
 
 	def self.clean
@@ -80,7 +83,11 @@ class AppConfigTest < MiniTest::Unit::TestCase
 		assert_equal DIST_VALUE, query_config_value
 	end
 	def test_i_non_exist_value
-		assert_equal nil, @@config['non.exist.config.item']
+		assert_nil @@config['non.exist.config.item']
+	end
+	def test_j_named_config
+		@@config = AppConfig.get_config 'test'
+		assert_equal DEPLOY_PLATFORM_VALUE, query_config_value
 	end
 
 	def test_z_clean

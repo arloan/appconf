@@ -14,36 +14,40 @@ gem install appconf
 
 **AppConf** loads and parses a series of YAML configuration files in priority, which means if multiple configuration items with the same path name exist in different files, then the value of the item in the highest priority file will be selected as query result.
 
-**AppConf** will loads all these YAML configuration files, if exist, in priority highest to lowest:
+After below setup code:
+```ruby
+AppConfig.setup 'myapp', '/root-dir/of/myapp', '/deployment/dir'
+```
+**AppConf** will try to load and parse all these YAML configuration files, if exist, in priority highest to lowest:
 
-- *`/path/to/specified/deployment/dir`*/*`myapp`*.*`ruby-platform`*.yaml
-- *`/path/to/specified/deployment/dir`*/*`myapp`*.yaml
-- *`/home/username`*/*`.myapp`*/*`myapp`*.*`ruby-platform`*.yaml
-- *`/home/username`*/*`.myapp`*/*`myapp`*.yaml
-- /etc/*`myapp`*/*`myapp`*.*`ruby-platform`*.yaml
-- /etc/*`myapp`*/*`myapp`*.yaml
-- *`/path/to/myapp`*/conf/*`myapp`*.*`ruby-platform`*.yaml
-- *`/path/to/myapp`*/conf/*`myapp`*.yaml
+- `/deployment/dir/myapp.`*ruby-platform*`.config.yaml`
+- `/deployment/dir/myapp.config.yaml`
+- */home/username*`/.myapp/myapp.`*ruby-platform*`.config.yaml`
+- */home/username*`/.myapp/myapp.config.yaml`
+- `/etc/myapp/myapp.`*ruby-platform*`.config.yaml`
+- `/etc/myapp/myapp.config.yaml`
+- `/root-dir/of/myapp/config/myapp.`*ruby-platform*`.config.yaml`
+- `/root-dir/of/myapp/config/myapp.config.yaml`
 
 Where:
 
-- *`/path/to/specified/deployment/dir`*: The directory where you app is deployed, use AppConfig::setup to tell the gem where it is.
+- `/deployment/dir/`: The directory where you app is deployed, use AppConfig::setup to tell the gem where it is. When this dir is not specified or is nil, *AppConf* will try to use dir specified by environment variable: *MYAPP*_CONF_DIR. In this case, *MYAPP* part of the environment variable name is the uppercase of first argument value of AppConfig::setup function. If this is still nil, deployment config files will not be used.
 
 
-- *`myapp`*: The name of the configuration file you requested via AppConfig::get_conf, or the name of your app when nil is used for configuration file name. The app name is setup via AppConfig::setup.
-- *`.myapp`*: Note that there is a **dot** before `myapp` for the name of this directory, which holds user level configuration file. While on Windows, there is **no** such dot.
+- `myapp`: The name of the configuration file you requested via AppConfig::get_conf, or the name of your app when nil is used for configuration file name. The app name is setup via AppConfig::setup.
+- `.myapp`: Note that there is a **dot** before `myapp` for the name of this directory, which holds user level configuration file. While on Windows, there is **no** such dot.
 
 
-- *`ruby-platform`*: The platform of the ruby is running on. For jruby, it is `java`.
+- `ruby-platform`: The platform name (i.e. value of the global variable `RUBY_PLATFORM`) of the ruby is running on. e.g. for jruby, it is `java`.
 
 
-- *`/home/username`*: The home directory of the user who is running your app. In Windows, it's `ENV['USERPROFILE']`, for POSIX, `ENV['HOME']` is used.  
+- `/home/username`: The home directory of the user who is running your app. In Windows, it's `ENV['USERPROFILE']`, for POSIX, `ENV['HOME']` is used.  
 
 
 - `/etc`: In Windows, `ENV['ALLUSERSPROFILE']` is used. 
 
 
-- *`/path/to/myapp`*: The root directory where your app resides in.
+- `/root-dir/of/myapp`: The root directory where your app resides in.
 
 ## Why YAML?
 
@@ -51,7 +55,7 @@ XML is heavy and verbose, JSON has no comments, that's it.
 
 ## Usage
 
-Say you have a ruby app named `awsome`, need a default configuration file located in `conf` directory under your app's root path, named `awsome.yaml` like this (in YAML):
+Say you have a ruby app named `awsome`, need a default configuration file located in `config` directory under your app's root path, named `awsome.config.yaml` like this (in YAML):
 
 ```yaml
 ---
@@ -60,7 +64,7 @@ db:
 	conection: sqlite://awsome.db
 ```
 
-While when you are testing you app on your development machine, you want to use a specific sqlite database file located at `/home/arloan/awsome-db/test-2016.db`, how can I do? It's simple, place a file named `awsome.yaml` under `/home/arloan/.awsome/`, with the contents:
+While when you are testing you app on your development machine, you may want to use a specific sqlite database file located at `/home/arloan/awsome-db/test-2016.db`. That is simple, just place a file named `awsome.config.yaml` under `/home/arloan/.awsome/`, with the contents:
 
 ```yaml
 ---
@@ -68,7 +72,7 @@ db:
 	connection: sqlite:///home/arloan/awsome-db/test-2016.db
 ```
 
-In addition, you want your app to be compatible with jruby, and want to use a different, jruby specific database connection method when running under jruby, then you can create a configuration file named `awsome.java.yaml`  and place it along with your default `awsome.yaml`, in  `conf` directory under your app's root path, with the contents:
+In addition, you want your app to be compatible with jruby, and want to use a different, jruby specific database connection method when running under jruby, then you can create a configuration file named `awsome.java.config.yaml`  and place it along with your default `awsome.config.yaml`, in  `config` directory under your app's root path, with the contents:
 
 ```yaml
 ---
@@ -89,7 +93,7 @@ AppConfig.setup 'Awsome', # app name, will be converted to lower case automatica
 # default config with app name and deployment directory
 default_config = AppConfig.get_config
 
-# use another series of configuration files with new name, use 'new-name.yaml' series
+# use another series of configuration files with new name, use 'new-name.config.yaml' series
 another_config = AppConfig.get_config 'new-name'
 
 # you can overwrite deployment directory when get a config serie

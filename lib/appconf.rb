@@ -57,7 +57,7 @@ class AppConfig
 	end
 	def self.get_config config_name = nil, config_dir = nil
 		raise ConfigError, ('please call %s::setup() before getting a config instance' % self.name) if @@app_name.nil?
-		self.new config_dir, config_name
+		self.new config_name, config_dir
 	end
 
 	def [] key
